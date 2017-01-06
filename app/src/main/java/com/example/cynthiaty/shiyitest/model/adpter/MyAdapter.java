@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.cynthiaty.shiyitest.R;
+import com.example.cynthiaty.shiyitest.model.Batch.ImageLoader;
 import com.example.cynthiaty.shiyitest.model.entity.Magazine;
 
 import java.io.BufferedInputStream;
@@ -30,7 +31,6 @@ public class MyAdapter extends BaseAdapter {
     private Context mContext;
     private List<Magazine> mData;
     private LayoutInflater inflater;
-    private ImageView content_image;
 
     public MyAdapter(Context context, List<Magazine> data) {
         mContext = context;
@@ -60,19 +60,22 @@ public class MyAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         TextView title = null;
         TextView content_text = null;
-        content_image = null;
+        TextView content_text_ = null;
+        ImageView content_image = null;
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.item, null);
             title = (TextView) convertView.findViewById(R.id.title);
             content_text = (TextView) convertView.findViewById(R.id.content_text);
+            content_text_ = (TextView) convertView.findViewById(R.id.content_text_);
             content_image = (ImageView) convertView.findViewById(R.id.content_image);
-            convertView.setTag(new ViewHolder(title, content_text, content_image));
+            convertView.setTag(new ViewHolder(title, content_text, content_text_, content_image));
         }
         else {
             ViewHolder viewHolder = (ViewHolder) convertView.getTag();
             title = viewHolder.title;
             content_text = viewHolder.content_text;
+            content_text_ = viewHolder.content_text_;
             content_image = viewHolder.content_image;
         }
 
@@ -81,14 +84,27 @@ public class MyAdapter extends BaseAdapter {
         if (magazine.getText().equals("null")) {
             magazine.setText("");
         }
-        content_text.setText(magazine.getText());
-        if (magazine.getImage().equals("null")) {
+        if (magazine.getImage().equals("null") || magazine.getImage().equals("")) {
             magazine.setImage("");
-            content_image.setImageBitmap(null);
+            content_image.setVisibility(View.GONE);
+            content_text.setVisibility(View.GONE);
+            content_text_.setVisibility(View.VISIBLE);
+            content_text_.setText(magazine.getText());
         }
         else {
-            //ImageTask imageTask = new ImageTask();
-            //imageTask.execute(magazine.getImage());
+            ImageLoader.with(mContext, magazine.getImage(), content_image);
+            if (content_image.getDrawable() == null) {
+                content_image.setVisibility(View.GONE);
+                content_text.setVisibility(View.GONE);
+                content_text_.setVisibility(View.VISIBLE);
+                content_text_.setText(magazine.getText());
+            }
+            else {
+                content_image.setVisibility(View.VISIBLE);
+                content_text.setVisibility(View.VISIBLE);
+                content_text_.setVisibility(View.GONE);
+                content_text.setText(magazine.getText());
+            }
         }
         return convertView;
     }
@@ -99,72 +115,14 @@ public class MyAdapter extends BaseAdapter {
     private static final class ViewHolder {
         private TextView title;
         private TextView content_text;
+        private TextView content_text_;
         private ImageView content_image;
 
-        public ViewHolder(TextView title, TextView content_text, ImageView content_image) {
+        public ViewHolder(TextView title, TextView content_text, TextView content_text_, ImageView content_image) {
             this.title = title;
             this.content_text = content_text;
+            this.content_text_ = content_text_;
             this.content_image = content_image;
-        }
-    }
-
-    /**
-     * 从url获取Bitmap
-     */
-    private Bitmap loadBitmap(String url) {
-        Bitmap bm = null;
-        InputStream is = null;
-        BufferedInputStream bis = null;
-        try {
-            URLConnection conn = new URL(url).openConnection();
-            conn.connect();
-            is = conn.getInputStream();
-            bis = new BufferedInputStream(is, 1024);
-            bm = BitmapFactory.decodeStream(bis);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                }catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (is != null) {
-                try {
-                    is.close();
-                }catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return bm;
-    }
-
-    /**
-     * 从URL获取Bitmap
-     */
-    private class ImageTask extends AsyncTask<String, Void, Bitmap> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
         }
     }
 }

@@ -15,6 +15,16 @@
         android:textColor="#02b3ff" />
     <TextView
         android:id="@+id/content_text"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/title"
+        android:textSize="18sp"
+        android:text="women"/>
+    <TextView
+        android:id="@+id/content_text_"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -25,8 +35,11 @@
         android:text="women"/>
     <ImageView
         android:id="@+id/content_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/title"
         android:layout_toRightOf="@id/content_text"/>
 </RelativeLayout>
